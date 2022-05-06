@@ -29,8 +29,12 @@ contract SplittableProperty is ERC721 {
         
     }
     // recover the pieces from a NFT made with the `combine` function
-    function decombine(uint256[] calldata tokensToCombine, string calldata metadata) public {
-        // TODO: implement the decombine function
+    function decombine(uint256 combinedNFTId) public {
+        require(_isApprovedOrOwner(msg.sender, combinedNFTId), "SplittableProperty: transfer caller is not owner nor approved");
+        for(uint256 i = combiners[combinedNFTId].length - 1; i >= 0; i--){
+            _transfer(address(this), msg.sender, combiners[combinedNFTId][i]);
+        }
+        _transfer(msg.sender, address(this), combinedNFTId);
     }
     // restore an NFT that has been split into pieces from it's pieces
     function rebuild(uint256 fatherTokenId) public {
