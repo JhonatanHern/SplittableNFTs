@@ -18,6 +18,7 @@ contract SplittableProperty is ERC721 {
     }
     // create an nft based on several loose ones without any connection needed
     function combine(uint256[] calldata tokensToCombine, string calldata metadata) public {
+        delete combiners[idCounter];
         for(uint256 i = tokensToCombine.length - 1; i >= 0; i--){
             require(_isApprovedOrOwner(msg.sender, tokensToCombine[i]), "SplittableProperty: transfer caller is not owner nor approved");
             _transfer(msg.sender, address(this), tokensToCombine[i]);
@@ -48,6 +49,7 @@ contract SplittableProperty is ERC721 {
     function separate(uint256 fatherTokenId, string[] calldata metadataForNewNFTs) public {
         require(_isApprovedOrOwner(msg.sender, fatherTokenId), "SplittableProperty: transfer caller is not owner nor approved");
         _transfer(msg.sender, address(this), fatherTokenId);
+        delete children[fatherTokenId];
         for(uint256 i = 0; i < metadataForNewNFTs.length; i++){
             _mint(msg.sender, idCounter);
             propertyMetadata[idCounter] = metadataForNewNFTs[i];
